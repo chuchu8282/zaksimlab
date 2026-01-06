@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>두쫀꾸 취향 테스트 x 작심랩</title>
+    <meta property="og:title" content="두쫀꾸 취향 테스트 x 작심랩">
+    <meta property="og:description" content="내 취애 두쫀꾸와 찰떡인 작심랩 메이트 찾기!">
     <style>
         :root {
             --primary-color: #ff6b6b;
@@ -15,7 +17,7 @@
         .hidden { display: none; }
         h1 { font-size: 24px; color: #333; margin-bottom: 10px; }
         p { color: #666; line-height: 1.5; }
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.2s; background: #eee; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.2s; background: #eee; text-decoration: none; color: inherit; }
         .btn:hover { background: #ddd; }
         .btn-main { background: var(--primary-color); color: white; font-weight: bold; }
         .btn-option { background: #f0f0f0; border: 2px solid transparent; }
@@ -49,7 +51,10 @@
         <div class="product-tag" id="product-category">카테고리</div>
         <h2 id="product-name" style="margin-top:0;">추천 상품명</h2>
         <p id="result-desc">유형 설명이 들어갑니다.</p>
-        <button class="btn btn-main" onclick="location.reload()">다시 하기</button>
+        
+        <button class="btn btn-main" onclick="shareResult()">결과 공유하기</button>
+        <button class="btn" style="background: #eee;" onclick="location.reload()">다시 하기</button>
+        
         <p style="font-size: 12px; color: #999;">#작심랩 #콤부차 #애사비 #단쉐</p>
     </div>
 </div>
@@ -87,35 +92,7 @@
 
     let currentQ = 0;
     let scores = { A: 0, B: 0, C: 0 };
-<div id="result-screen" class="hidden">
-    <p>나의 두쫀꾸 메이트는?</p>
-    <h1 id="result-title">유형 명칭</h1>
-    <div class="result-img" id="result-icon">✨</div>
-    <div class="product-tag" id="product-category">카테고리</div>
-    <h2 id="product-name" style="margin-top:0;">추천 상품명</h2>
-    <p id="result-desc">유형 설명이 들어갑니다.</p>
 
-    <button class="btn btn-main" onclick="shareResult()">결과 공유하기</button> 
-    <button class="btn" style="background: #eee;" onclick="location.reload()">다시 하기</button>
-    <p style="font-size: 12px; color: #999;">#작심랩 #콤부차 #애사비 #단쉐</p>
-    function shareResult() {
-    const title = document.getElementById('result-title').innerText;
-    const product = document.getElementById('product-name').innerText;
-    const url = window.location.href; 
-
-    if (navigator.share) {
-        navigator.share({
-            title: '두쫀꾸 취향 테스트 x 작심랩',
-            text: `나의 두쫀꾸 메이트는 [${title}]! 추천 상품: ${product}`,
-            url: url,
-        });
-    } else {
-        navigator.clipboard.writeText(url).then(() => {
-            alert('링크가 복사되었습니다!');
-        });
-    }
-}
-</div>
     function startTest() {
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
@@ -151,7 +128,6 @@
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
 
-        // 가장 많이 선택된 유형 찾기
         const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
         const res = results[winner];
 
@@ -161,9 +137,25 @@
         document.getElementById('product-name').innerText = res.product;
         document.getElementById('result-desc').innerText = res.desc;
     }
+
+    // 공유하기 함수
+    function shareResult() {
+        const title = document.getElementById('result-title').innerText;
+        const url = window.location.href;
+
+        if (navigator.share) {
+            navigator.share({
+                title: '두쫀꾸 취향 테스트 x 작심랩',
+                text: `나의 두쫀꾸 메이트는 [${title}]! 지금 테스트해보세요!`,
+                url: url,
+            }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                alert('링크가 복사되었습니다! 친구들에게 공유해보세요.');
+            });
+        }
+    }
 </script>
 
 </body>
-
 </html>
-
