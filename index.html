@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>두쫀꾸 취향 테스트 x 작심랩</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --bg-color: #fff9f0;
+            --card-bg: #ffffff;
+        }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        #test-container { background: var(--card-bg); width: 100%; max-width: 450px; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        .hidden { display: none; }
+        h1 { font-size: 24px; color: #333; margin-bottom: 10px; }
+        p { color: #666; line-height: 1.5; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.2s; background: #eee; }
+        .btn:hover { background: #ddd; }
+        .btn-main { background: var(--primary-color); color: white; font-weight: bold; }
+        .btn-option { background: #f0f0f0; border: 2px solid transparent; }
+        .btn-option:active { border-color: var(--primary-color); background: #ffebeb; }
+        .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; margin-bottom: 20px; }
+        .progress { height: 100%; background: var(--primary-color); border-radius: 4px; width: 0%; transition: width 0.3s; }
+        .result-img { width: 120px; height: 120px; background: #eee; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .product-tag { display: inline-block; padding: 5px 15px; background: #fff0f0; color: var(--primary-color); border-radius: 20px; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="test-container">
+    <div id="start-screen">
+        <div style="font-size: 50px;">🍪</div>
+        <h1>두쫀꾸 취향 테스트</h1>
+        <p>내 최애 두쫀꾸 스타일을 찾고<br>딱 맞는 <b>작심랩</b> 메이트를 추천받으세요!</p>
+        <button class="btn btn-main" onclick="startTest()">테스트 시작하기</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="progress-bar"><div id="progress" class="progress"></div></div>
+        <h2 id="question-text">질문 내용</h2>
+        <div id="options-container"></div>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <p>나의 두쫀꾸 메이트는?</p>
+        <h1 id="result-title">유형 명칭</h1>
+        <div class="result-img" id="result-icon">✨</div>
+        <div class="product-tag" id="product-category">카테고리</div>
+        <h2 id="product-name" style="margin-top:0;">추천 상품명</h2>
+        <p id="result-desc">유형 설명이 들어갑니다.</p>
+        <button class="btn btn-main" onclick="location.reload()">다시 하기</button>
+        <p style="font-size: 12px; color: #999;">#작심랩 #콤부차 #애사비 #단쉐</p>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "가장 선호하는 피의 두께는?", a: [{t:"얇은 피 (속재료 파)", v:"A"}, {t:"보통 (조화로운 파)", v:"B"}, {t:"두꺼운 피 (식감 파)", v:"C"}] },
+        { q: "속 내용물의 식감은 어때야 할까?", a: [{t:"촉촉 (크림처럼 부드러운)", v:"A"}, {t:"적당 (포슬포슬한)", v:"B"}, {t:"퍼석/꾸덕 (밀도 높은)", v:"C"}] },
+        { q: "절대 포기 못 하는 맛은?", a: [{t:"상큼 달콤 (과일 계열)", v:"A"}, {t:"깔끔 달콤 (은은한 단맛)", v:"B"}, {t:"고소함 (할매니얼/곡물)", v:"C"}] }
+    ];
+
+    const results = {
+        A: {
+            title: "상큼 팡팡! 가벼운 미식가",
+            category: "콤부차",
+            product: "작심랩 콤부차 (레몬/샤인머스캣)",
+            icon: "🍋",
+            desc: "얇은 피와 촉촉한 속재료를 좋아하는 당신! 입안에서 사르르 녹는 달콤함을 탄산으로 깔끔하게 잡아주는 콤부차가 최고의 궁합이에요."
+        },
+        B: {
+            title: "밸런스 장인! 깔끔 관리자",
+            category: "애사비",
+            product: "작심랩 애사비 (애플사이다비니거)",
+            icon: "🍎",
+            desc: "적당한 식감과 조화를 중시하는 당신에게는 식후 혈당까지 생각하는 애사비를 추천해요. 입안을 가장 개운하게 리프레시해줍니다."
+        },
+        C: {
+            title: "꾸덕 집착! 든든한 매니아",
+            category: "단쉐",
+            product: "작심랩 단백질 쉐이크 (곡물/초코)",
+            icon: "🥜",
+            desc: "두툼하고 뻑뻑한 꾸덕함을 사랑하는 당신은 진정한 고수! 묵직한 디저트의 고소함을 극대화하면서 단백질까지 채워주는 단쉐가 정답입니다."
+        }
+    };
+
+    let currentQ = 0;
+    let scores = { A: 0, B: 0, C: 0 };
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentQ >= questions.length) {
+            showResult();
+            return;
+        }
+        const q = questions[currentQ];
+        document.getElementById('question-text').innerText = q.q;
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        q.a.forEach(answer => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-option';
+            btn.innerText = answer.t;
+            btn.onclick = () => selectOption(answer.v);
+            container.appendChild(btn);
+        });
+        document.getElementById('progress').style.width = ((currentQ / questions.length) * 100) + '%';
+    }
+
+    function selectOption(val) {
+        scores[val]++;
+        currentQ++;
+        showQuestion();
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+
+        // 가장 많이 선택된 유형 찾기
+        const winner = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+        const res = results[winner];
+
+        document.getElementById('result-title').innerText = res.title;
+        document.getElementById('result-icon').innerText = res.icon;
+        document.getElementById('product-category').innerText = res.category;
+        document.getElementById('product-name').innerText = res.product;
+        document.getElementById('result-desc').innerText = res.desc;
+    }
+</script>
+
+</body>
+</html>
